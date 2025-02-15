@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { loginUser, recaptchaTokenVerification } from "@/services/AuthService";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 
 
@@ -27,6 +28,11 @@ import { useState } from "react";
 export default function LoginForm() {
   const form = useForm();
   const [reCapchaStatus, setReCapchaStatus] = useState(false)
+
+  const searchParams = useSearchParams()
+  const redirect = searchParams.get("redirectPath")
+  const router = useRouter()
+
 
 
   console.log(reCapchaStatus)
@@ -41,6 +47,11 @@ export default function LoginForm() {
       console.log(response)
       if (response.success) {
         toast.success("User login successfully!");
+        if (redirect) {
+          router.push(redirect)
+        } else {
+          router.push("/profile")
+        }
       } else {
         toast.error(response.message || "Login failed.");
       }

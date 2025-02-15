@@ -27,6 +27,7 @@ export const registerUser = async (userData: FieldValues) => {
             throw new Error(`HTTP error! Status: ${res.status} - ${errorData?.message || "Unknown error"}`);
         }
 
+
         return await res.json();
     } catch (error) {
         console.error("Error registering user:", error);
@@ -86,16 +87,14 @@ export const loginUser = async (userData: FieldValues) => {
 export const getCurrentUser = async () => {
     const accessToken = (await cookies()).get("accessToken")?.value
 
-    console.log("Access Token:", accessToken);
 
     if (!accessToken) {
         console.error("No token found");
-        return "decode fail token";
+        return null
     }
 
     try {
         const decodedData = jwtDecode(accessToken);
-        console.log("Decoded Token Data:", decodedData);
         return decodedData;
     } catch (error) {
         console.error("Token decoding failed:", error);
@@ -126,3 +125,8 @@ export const recaptchaTokenVerification = async (token: string) => {
         return { success: false, message: err instanceof Error ? err.message : "Unknown error occurred" };
     }
 };
+
+
+export const logout = async() => {
+    (await cookies()).delete("accessToken")
+}
